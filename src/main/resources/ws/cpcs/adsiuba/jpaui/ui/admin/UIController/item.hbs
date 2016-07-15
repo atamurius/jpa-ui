@@ -1,0 +1,16 @@
+{{#partial 'title'}}
+    {{#if item}}
+        {{item}}
+    {{^}}
+        Create {{currentEntity.name}}
+    {{/if}}
+    | {{currentEntity.pluralName}} | Administrative interface
+{{/partial}}
+
+{{#partial 'body'}}
+
+    {{item}}
+
+{{/partial}}
+
+{{> index}}

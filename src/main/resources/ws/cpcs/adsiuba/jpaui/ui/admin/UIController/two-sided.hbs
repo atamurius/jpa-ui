@@ -1,0 +1,31 @@
+{{#partial 'title'}}
+    {{#each path reversed=true}}
+        {{#unless @first}}|{{/unless}} {{title}}
+    {{/each}}
+{{/partial}}
+
+{{#partial 'content'}}
+
+    <style>
+        body { margin-top: 1em; }
+    </style>
+
+    <div class="row">
+        {{#block 'menu'}}{{/block}}
+        <div class="col-md-9 col-sm-11 col-xs-12">
+            <ol class="breadcrumb">
+                {{#each path}}
+                    {{#if @last}}
+                        <li class="active">{{title}}</li>
+                    {{^}}
+                        <li><a href="{{url}}">{{title}}</a></li>
+                    {{/if}}
+                {{/each}}
+            </ol>
+            {{#block 'body'}}{{/block}}
+        </div>
+    </div>
+
+{{/partial}}
+
+{{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.common}}

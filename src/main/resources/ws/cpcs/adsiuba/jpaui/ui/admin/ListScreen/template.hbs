@@ -1,0 +1,54 @@
+{{#partial 'menu-bottom'}}
+
+    <div class="panel panel-default">
+        <div class="panel-heading hidden-sm"><strong>Actions</strong></div>
+        <div class="list-group">
+            <a href="{{base}}/{{currentEntity.id}}/+"
+               class="list-group-item"
+               style="min-width: 3.2em"
+               title="Create {{currentEntity.name}}">
+                <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                <span class="hidden-sm">Create {{currentEntity.name}}</span>
+            </a>
+        </div>
+    </div>
+
+{{/partial}}
+
+{{#partial 'menu'}}
+    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu }}
+{{/partial}}
+
+{{#partial 'body'}}
+
+    <table class="table table-condensed table-hovered">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Number</th>
+            <th>Header</th>
+            <th>Result</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each items}}
+            <tr>
+                <td>Data</td>
+                <td>Data</td>
+                <td>Data</td>
+                <td>Data</td>
+            </tr>
+        {{/each}}
+        {{^items}}
+            <tr>
+                <td colspan="100">
+                    <em>No items found</em>
+                </td>
+            </tr>
+        {{/items}}
+        </tbody>
+    </table>
+
+{{/partial}}
+
+{{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.two-sided }}

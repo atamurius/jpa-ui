@@ -1,0 +1,31 @@
+<style>
+    .navigation .panel {
+        min-width: 3.5em;
+    }
+</style>
+
+<div class="col-md-3 col-sm-1 col-xs-12 navigation">
+<div class="row">
+    <div class="col-sm-12 {{#unless single}}col-xs-6{{/unless}}">
+        <div class="panel panel-default">
+            <div class="panel-heading hidden-sm"><strong>Entities</strong></div>
+            <div class="list-group">
+                {{#each entities}}
+                    <a href="{{id}}"
+                       class="list-group-item {{#if (eq currentEntity.id id)}}active{{/if}}"
+                       title="{{pluralName}}">
+                        <span class="glyphicon glyphicon-{{iconId}}" aria-hidden="true"></span>
+                        <span class="hidden-sm">{{pluralName}}</span>
+                    </a>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+
+    {{#unless single}}
+    <div class="col-sm-12 col-xs-6">
+        {{#block 'menu-bottom'}}{{/block}}
+    </div>
+    {{/unless}}
+</div>
+</div>
