@@ -1,10 +1,7 @@
 package ws.cpcs.adsiuba.jpaui.webapp.app;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -17,6 +14,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import ws.cpcs.adsiuba.jpaui.model.EntityDescriptor;
+import ws.cpcs.adsiuba.jpaui.ui.admin.UIConfig;
 import ws.cpcs.adsiuba.jpaui.webapp.app.model.groups.UserGroup;
 import ws.cpcs.adsiuba.jpaui.webapp.app.model.users.ListedUser;
 import ws.cpcs.adsiuba.jpaui.webapp.app.model.users.User;
@@ -32,6 +30,7 @@ import java.util.HashMap;
 @PropertySource("${JPAUI_CONFIG:classpath:config.properties}")
 @ComponentScan("ws.cpcs.adsiuba.jpaui.webapp.app")
 @EnableJpaRepositories("ws.cpcs.adsiuba.jpaui.webapp.app")
+@Import(UIConfig.class)
 public class AppConfig {
 
     @Bean

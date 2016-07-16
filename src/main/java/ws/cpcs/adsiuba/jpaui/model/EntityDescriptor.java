@@ -1,16 +1,20 @@
 package ws.cpcs.adsiuba.jpaui.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import static ws.cpcs.adsiuba.jpaui.model.NameUtils.dashSeparated;
 import static ws.cpcs.adsiuba.jpaui.model.NameUtils.plural;
@@ -31,6 +35,9 @@ public class EntityDescriptor<T extends WithId<?>> {
 
     @Autowired(required = false)
     private List<JpaRepository> repositories;
+
+    @Autowired
+    private ConversionService conversionService;
 
     public EntityDescriptor(Class<T> entityClass) {
         this.entityClass = Objects.requireNonNull(entityClass);
@@ -53,7 +60,7 @@ public class EntityDescriptor<T extends WithId<?>> {
         if (id == null) {
             id = dashSeparated(pluralName);
         }
-        props.put("default", new PropertyEnum(entityClass));
+        props.put("default", new PropertyEnum(entityClass, conversionService));
     }
 
     private Class<?> findRepoEntity(Type type) {
@@ -101,7 +108,7 @@ public class EntityDescriptor<T extends WithId<?>> {
         if (! view.isAssignableFrom(entityClass)) {
             throw new IllegalArgumentException(view +" is not interface of "+ entityClass);
         }
-        this.props.put(name, new PropertyEnum(view));
+        this.props.put(name, new PropertyEnum(view, conversionService));
         return this;
     }
 
@@ -135,5 +142,36 @@ public class EntityDescriptor<T extends WithId<?>> {
 
     public List<PropertyEnum.Property> getProperties(String view) {
         return props.computeIfAbsent(view, v -> props.get("default")).getProperties();
+    }
+
+    public T createNew() {
+        try {
+            return entityClass.newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalArgumentException("Unexpected reflection error", e);
+        }
+    }
+
+    @Transactional
+    @SuppressWarnings("unchecked")
+    public T update(Function<JpaRepository<T,Serializable>,T> loader, Map<String,String> params) {
+        T entity = (T) loader.apply((JpaRepository) getRepository());
+        getProperties().stream()
+                .filter(prop -> params.containsKey(prop.getName()))
+                .forEach(prop -> prop.set(entity, params.get(prop.getName())));
+        getRepository().save(entity);
+        return entity;
+    }
+
+    public Class getIdType() {
+        try {
+            return entityClass.getMethod("getId").getReturnType();
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException(entityClass +" should implement WithId interface");
+        }
+    }
+
+    public Object convertToId(String id) {
+        return conversionService.convert(id, getIdType());
     }
 }

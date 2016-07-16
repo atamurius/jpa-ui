@@ -19,7 +19,7 @@
 
 {{#partial 'body'}}
 
-    <table class="table table-condensed table-hovered">
+    <table class="table table-condensed table-hover">
         <thead>
         <tr>
             <th width="1"><input type="checkbox" /></th>
@@ -33,7 +33,7 @@
             <tr>
                 <th><input type="checkbox" name="items" value="{{id}}" /></th>
                 {{#each properties}}
-                    <td>Data</td>
+                    <td>{{getProperty ../this this}}</td>
                 {{/each}}
             </tr>
         {{/each}}

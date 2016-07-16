@@ -1,14 +1,9 @@
 {{#partial 'menu-bottom'}}
 
     {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
-        url='#'
+        url='javascript:void(save())'
         title=(concat 'Save ' currentEntity.name)
-        icon='ok-circle'}}
-
-    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
-        url=(concat base '/' currentEntity.id)
-        title='Cancel'
-        icon='ban-circle'}}
+        icon='floppy-disk'}}
 
 {{/partial}}
 
@@ -18,7 +13,37 @@
 
 {{#partial 'body'}}
 
-    <h1>Entity here</h1>
+    <form method="post" action="{{base}}/{{currentEntity.id}}/{{id}}"
+          class="form-horizontal"
+          id="main-form"
+          onsubmit="return submitForm(this)">
+        {{#each currentEntity.properties}}
+            {{#unless isReadOnly}}
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="field_{{name}}"
+                           title="{{displayName}}">{{displayName}}</label>
+                    <div class="col-sm-10">
+                        <input class="form-control input-sm"
+                               name="{{name}}"
+                               id="field_{{name}}" placeholder="{{displayName}}">
+                    </div>
+                </div>
+            {{/unless}}
+        {{/each}}
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <div class="btn-group btn-group-sm" role="group">
+                    <button class="btn btn-primary" type="submit">
+                        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                        Save {{currentEntity.name}}
+                    </button>
+                    <a href="{{base}}/{{currentEntity.id}}" class="btn btn-default">
+                        Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
 
 {{/partial}}
 

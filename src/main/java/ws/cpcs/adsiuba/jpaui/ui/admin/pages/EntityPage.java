@@ -1,13 +1,16 @@
 package ws.cpcs.adsiuba.jpaui.ui.admin.pages;
 
 import ws.cpcs.adsiuba.jpaui.model.EntityDescriptor;
+import ws.cpcs.adsiuba.jpaui.model.WithId;
 import ws.cpcs.adsiuba.jpaui.model.WithName;
 import ws.cpcs.adsiuba.jpaui.ui.admin.BreadCrumb;
 import ws.cpcs.adsiuba.jpaui.ui.admin.Page;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class EntityPage {
     @SuppressWarnings("unchecked")
@@ -22,6 +25,7 @@ public class EntityPage {
                 model -> {
                     model.addAttribute("currentEntity", descriptor);
                     model.addAttribute("item", item);
+                    model.addAttribute("id", id == null ? "+" : id);
                     return "edit";
                 });
     }
@@ -32,5 +36,10 @@ public class EntityPage {
             name = ((WithName) item).getDisplayName();
         }
         return defaultIfBlank(name, descriptor.getName() +" "+ id);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void save(EntityDescriptor<WithId<?>> descriptor, String id, Map<String, String> params) {
+        descriptor.update(repo -> "+".equals(id) ? descriptor.createNew() : repo.findOne(id), params);
     }
 }

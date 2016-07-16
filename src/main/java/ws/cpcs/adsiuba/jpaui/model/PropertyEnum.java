@@ -1,11 +1,9 @@
 package ws.cpcs.adsiuba.jpaui.model;
 
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.core.convert.ConversionService;
 
-import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -20,6 +18,7 @@ import static ws.cpcs.adsiuba.jpaui.model.NameUtils.spaceSeparated;
  */
 public class PropertyEnum {
 
+    private final ConversionService conversionService;
     private List<Property> properties;
 
     public interface Property {
@@ -27,9 +26,12 @@ public class PropertyEnum {
         String getDisplayName();
         Class getType();
         boolean isReadOnly();
+        void set(Object target, Object value);
+        Object get(Object obj);
     }
 
-    public PropertyEnum(Class type) {
+    public PropertyEnum(Class type, ConversionService conversionService) {
+        this.conversionService = conversionService;
         Map<String, Method> methods = Stream.of(type.getMethods())
                 .collect(toMap(
                         Method::getName,
@@ -64,7 +66,7 @@ public class PropertyEnum {
         return properties;
     }
 
-    private static class BeanProperty implements Property {
+    private class BeanProperty implements Property {
         final String name;
         final String displayName;
         final Method readMethod;
@@ -85,7 +87,26 @@ public class PropertyEnum {
             return readMethod.getReturnType();
         }
         public boolean isReadOnly() {
-            return writeMethod != null;
+            return writeMethod == null;
+        }
+        public void set(Object target, Object value) {
+            if (isReadOnly()) {
+                throw new IllegalStateException("Cannot write property "+ readMethod.getDeclaringClass() +"."+ name);
+            }
+            try {
+                writeMethod.invoke(target, conversionService.convert(value, getType()));
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalArgumentException("Cannot set "+ value +" to "+
+                        readMethod.getDeclaringClass() +"."+ name, e);
+            }
+        }
+        public Object get(Object obj) {
+            try {
+                return readMethod.invoke(obj);
+            } catch (ReflectiveOperationException e) {
+                throw new IllegalArgumentException("Cannot get "+
+                        readMethod.getDeclaringClass() +"."+ name, e);
+            }
         }
     }
 }

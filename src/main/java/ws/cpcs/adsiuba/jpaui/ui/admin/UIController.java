@@ -90,12 +90,23 @@ public abstract class UIController {
         return render(model, ListPage.list(entityDescriptorById(entity)));
     }
 
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = {"/{entity}/{id:.+}/edit","/{entity}/{id:\\+}"}, method = RequestMethod.GET)
     public ResponseEntity<String> edit(
             @PathVariable String entity,
-            @PathVariable String id, Model model)
+            @PathVariable String id,
+            Model model)
             throws IOException {
         return render(model, EntityPage.edit(entityDescriptorById(entity), "+".equals(id) ? null : id));
+    }
+
+    @RequestMapping(value = "/{entity}/{id}", method = RequestMethod.POST)
+    public String save(
+            @PathVariable String entity,
+            @PathVariable String id,
+            @RequestParam Map<String,String> params,
+            Model model)
+            throws IOException {
+        EntityPage.save(entityDescriptorById(entity), id, params);
+        return "redirect:"+ base +"/"+ entity;
     }
 }

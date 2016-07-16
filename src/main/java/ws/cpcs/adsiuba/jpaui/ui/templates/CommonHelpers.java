@@ -1,6 +1,7 @@
 package ws.cpcs.adsiuba.jpaui.ui.templates;
 
 import com.github.jknack.handlebars.Options;
+import ws.cpcs.adsiuba.jpaui.model.PropertyEnum;
 
 import java.io.IOException;
 import java.util.*;
@@ -37,5 +38,9 @@ public class CommonHelpers {
         return Stream.concat(Stream.of(param), Stream.of(opts.params))
                 .map(String::valueOf)
                 .collect(Collectors.joining(opts.hash("sep", "")));
+    }
+
+    public static String getProperty(Object obj, PropertyEnum.Property prop) {
+        return Objects.toString(prop.get(obj));
     }
 }
