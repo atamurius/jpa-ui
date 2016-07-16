@@ -4,6 +4,8 @@ import com.github.jknack.handlebars.Options;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CommonHelpers {
 
@@ -29,5 +31,11 @@ public class CommonHelpers {
             }
         }
         return buff;
+    }
+
+    public static String concat(Object param, Options opts) {
+        return Stream.concat(Stream.of(param), Stream.of(opts.params))
+                .map(String::valueOf)
+                .collect(Collectors.joining(opts.hash("sep", "")));
     }
 }

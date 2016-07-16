@@ -1,0 +1,25 @@
+{{#partial 'menu-bottom'}}
+
+    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
+        url='#'
+        title=(concat 'Save ' currentEntity.name)
+        icon='ok-circle'}}
+
+    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
+        url=(concat base '/' currentEntity.id)
+        title='Cancel'
+        icon='ban-circle'}}
+
+{{/partial}}
+
+{{#partial 'menu'}}
+    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu }}
+{{/partial}}
+
+{{#partial 'body'}}
+
+    <h1>Entity here</h1>
+
+{{/partial}}
+
+{{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.two-sided }}

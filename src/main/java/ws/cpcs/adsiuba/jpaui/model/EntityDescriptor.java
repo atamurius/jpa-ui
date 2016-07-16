@@ -2,14 +2,19 @@ package ws.cpcs.adsiuba.jpaui.model;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.Repository;
 
 import javax.annotation.PostConstruct;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
+
+import static ws.cpcs.adsiuba.jpaui.model.NameUtils.dashSeparated;
+import static ws.cpcs.adsiuba.jpaui.model.NameUtils.plural;
+import static ws.cpcs.adsiuba.jpaui.model.NameUtils.spaceSeparated;
 
 /**
  * Describes entity for UI
@@ -22,6 +27,7 @@ public class EntityDescriptor<T extends WithId<?>> {
     private String pluralName;
     private String id;
     private String iconId = "file";
+    private Map<String,PropertyEnum> props = new HashMap<>();
 
     @Autowired(required = false)
     private List<JpaRepository> repositories;
@@ -39,14 +45,15 @@ public class EntityDescriptor<T extends WithId<?>> {
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find Repository for " + entityClass));
         repositories = null;
         if (name == null) {
-            name = entityClass.getSimpleName().replaceAll("\\B([A-Z])"," $1");
+            name = spaceSeparated(entityClass.getSimpleName());
         }
         if (pluralName == null) {
-            pluralName = name + (name.matches(".*(s|se|sh|ge|ch)$") ? "es" : "s");
+            pluralName = plural(name);
         }
         if (id == null) {
-            id = pluralName.replaceAll("\\s+","-").toLowerCase();
+            id = dashSeparated(pluralName);
         }
+        props.put("default", new PropertyEnum(entityClass));
     }
 
     private Class<?> findRepoEntity(Type type) {
@@ -89,6 +96,15 @@ public class EntityDescriptor<T extends WithId<?>> {
         return this;
     }
 
+    @SuppressWarnings("unchecked")
+    public EntityDescriptor<T> withView(String name, Class view) {
+        if (! view.isAssignableFrom(entityClass)) {
+            throw new IllegalArgumentException(view +" is not interface of "+ entityClass);
+        }
+        this.props.put(name, new PropertyEnum(view));
+        return this;
+    }
+
     public Class<T> getEntityClass() {
         return entityClass;
     }
@@ -111,5 +127,13 @@ public class EntityDescriptor<T extends WithId<?>> {
 
     public String getId() {
         return id;
+    }
+
+    public List<PropertyEnum.Property> getProperties() {
+        return getProperties("default");
+    }
+
+    public List<PropertyEnum.Property> getProperties(String view) {
+        return props.computeIfAbsent(view, v -> props.get("default")).getProperties();
     }
 }

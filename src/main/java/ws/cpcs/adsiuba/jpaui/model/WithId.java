@@ -10,8 +10,6 @@ public interface WithId<T extends Serializable> {
 
     T getId();
 
-    void setId(T id);
-
     static boolean equals(WithId<?> self, Object other) {
         return !(other == null || !other.getClass().equals(self.getClass()))
                 && Objects.equals(self.getId(), ((WithId) other).getId());

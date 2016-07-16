@@ -1,31 +1,33 @@
-<style>
-    .navigation .panel {
-        min-width: 3.5em;
-    }
-</style>
+<nav class="navbar navbar-left col-md-3 col-sm-1 col-xs-12">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="glyphicon glyphicon-menu-hamburger"></span>
+            </button>
+            <a class="navbar-brand" href="{{base}}/" title="Admin Panel">
+                <span class="glyphicon glyphicon-home hidden-md hidden-lg hidden-xs" aria-hidden="true"></span>
+                <span class="hidden-sm">Admin Panel</span>
+            </a>
+        </div>
+        <div class="collapse navbar-collapse clearfix" id="navbar-collapse">
+            <ul class="nav nav-pills nav-stacked">
+                <li class="nav-divider"></li>
 
-<div class="col-md-3 col-sm-1 col-xs-12 navigation">
-<div class="row">
-    <div class="col-sm-12 {{#unless single}}col-xs-6{{/unless}}">
-        <div class="panel panel-default">
-            <div class="panel-heading hidden-sm"><strong>Entities</strong></div>
-            <div class="list-group">
                 {{#each entities}}
-                    <a href="{{id}}"
-                       class="list-group-item {{#if (eq currentEntity.id id)}}active{{/if}}"
-                       title="{{pluralName}}">
-                        <span class="glyphicon glyphicon-{{iconId}}" aria-hidden="true"></span>
-                        <span class="hidden-sm">{{pluralName}}</span>
-                    </a>
+                    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
+                        active=(eq currentEntity.id id)
+                        url=(concat base '/' id)
+                        title=pluralName
+                        icon=iconId}}
                 {{/each}}
-            </div>
+
+                {{#unless single}}
+                    <li class="nav-divider"></li>
+                    {{#block 'menu-bottom'}}{{/block}}
+                {{/unless}}
+            </ul>
         </div>
     </div>
-
-    {{#unless single}}
-    <div class="col-sm-12 col-xs-6">
-        {{#block 'menu-bottom'}}{{/block}}
-    </div>
-    {{/unless}}
-</div>
-</div>
+</nav>

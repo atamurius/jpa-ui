@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
-public class User implements WithId<Long> {
+public class User implements WithId<Long>, ListedUser {
 
     @Id @GeneratedValue
     private Long id;

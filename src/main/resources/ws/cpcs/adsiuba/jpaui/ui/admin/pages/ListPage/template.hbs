@@ -1,0 +1,52 @@
+{{#partial 'menu-bottom'}}
+
+    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
+        url=(concat base '/' currentEntity.id '/+')
+        title=(concat 'Create ' currentEntity.name)
+        icon='plus-sign'}}
+
+    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
+        disabled=true
+        url=(concat base '/' currentEntity.id)
+        title=(concat 'Remove ' currentEntity.pluralName)
+        icon='minus-sign'}}
+
+{{/partial}}
+
+{{#partial 'menu'}}
+    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu }}
+{{/partial}}
+
+{{#partial 'body'}}
+
+    <table class="table table-condensed table-hovered">
+        <thead>
+        <tr>
+            <th width="1"><input type="checkbox" /></th>
+            {{#each properties}}
+                <th>{{displayName}}</th>
+            {{/each}}
+        </tr>
+        </thead>
+        <tbody>
+        {{#each items}}
+            <tr>
+                <th><input type="checkbox" name="items" value="{{id}}" /></th>
+                {{#each properties}}
+                    <td>Data</td>
+                {{/each}}
+            </tr>
+        {{/each}}
+        {{^items}}
+            <tr>
+                <td colspan="100">
+                    <em>No items found</em>
+                </td>
+            </tr>
+        {{/items}}
+        </tbody>
+    </table>
+
+{{/partial}}
+
+{{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.two-sided }}

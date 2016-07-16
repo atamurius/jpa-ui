@@ -17,6 +17,8 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import ws.cpcs.adsiuba.jpaui.model.EntityDescriptor;
+import ws.cpcs.adsiuba.jpaui.webapp.app.model.groups.UserGroup;
+import ws.cpcs.adsiuba.jpaui.webapp.app.model.users.ListedUser;
 import ws.cpcs.adsiuba.jpaui.webapp.app.model.users.User;
 import ws.cpcs.adsiuba.jpaui.webapp.app.model.users.UserRepo;
 
@@ -74,6 +76,13 @@ public class AppConfig {
     @Bean
     EntityDescriptor<User> userDescriptor() {
         return new EntityDescriptor<>(User.class)
-                .withIcon("user");
+                .withIcon("user")
+                .withView("list", ListedUser.class);
+    }
+
+    @Bean
+    EntityDescriptor<UserGroup> groupDescriptor() {
+        return new EntityDescriptor<>(UserGroup.class)
+                .withIcon("eye-open");
     }
 }
