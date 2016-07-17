@@ -18,7 +18,7 @@
           id="main-form"
           onsubmit="return submitForm(this)">
         {{#each currentEntity.properties}}
-            {{#unless isReadOnly}}
+            {{#unless (eq true readOnly)}}
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="field_{{name}}"
                            title="{{displayName}}">{{displayName}}</label>

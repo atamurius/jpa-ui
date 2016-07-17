@@ -1,4 +1,4 @@
-package ws.cpcs.adsiuba.jpaui.model;
+package ws.cpcs.adsiuba.jpaui.model.descr;
 
 /**
  * Name conversions

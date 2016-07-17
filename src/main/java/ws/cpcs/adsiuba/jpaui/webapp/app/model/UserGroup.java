@@ -1,13 +1,13 @@
-package ws.cpcs.adsiuba.jpaui.webapp.app.model.groups;
+package ws.cpcs.adsiuba.jpaui.webapp.app.model;
 
-import ws.cpcs.adsiuba.jpaui.model.WithId;
+import ws.cpcs.adsiuba.jpaui.model.Ident;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class UserGroup implements WithId<Long> {
+public class UserGroup implements Ident<Long> {
 
     @Id @GeneratedValue
     private Long id;
@@ -17,10 +17,6 @@ public class UserGroup implements WithId<Long> {
     @Override
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getTitle() {

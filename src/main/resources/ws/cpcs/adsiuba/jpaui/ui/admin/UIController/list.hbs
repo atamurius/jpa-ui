@@ -1,0 +1,89 @@
+{{#partial 'menu-bottom'}}
+
+    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
+        url=(concat base '/' currentEntity.id '/+')
+        title=(concat 'Create ' currentEntity.name)
+        icon='plus-sign'}}
+
+    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
+        disabled=true
+        url=(concat base '/' currentEntity.id)
+        title=(concat 'Remove ' currentEntity.pluralName)
+        icon='minus-sign'}}
+
+{{/partial}}
+
+{{#partial 'menu'}}
+    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu }}
+{{/partial}}
+
+{{#partial 'body'}}
+
+    <table class="table table-condensed table-hover">
+        <thead>
+        <tr>
+            <th width="1"><input type="checkbox" /></th>
+            {{#each properties}}
+                <th>{{displayName}}</th>
+            {{/each}}
+        </tr>
+        </thead>
+        <tbody>
+        {{#each items.content}}
+            <tr>
+                <th><input type="checkbox" name="items" value="{{id}}" /></th>
+                {{#each this}}
+                    <td>{{value}}</td>
+                {{/each}}
+            </tr>
+        {{/each}}
+        {{^items}}
+            <tr>
+                <td colspan="100">
+                    <em>No items found</em>
+                </td>
+            </tr>
+        {{/items}}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="100">
+                <div class="btn-toolbar pull-right" role="toolbar">
+                    {{#unless (eq 0 items.totalPages)}}
+                    <div class="btn-group btn-group-xs" role="group">
+                        <a href="?page={{add -1 items.number}}&size={{items.size}}"
+                           class="btn btn-default {{#if (eq items.number 0)}}disabled{{/if}}">
+                            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        </a>
+                        {{#times items.totalPages}}
+                            <a href="?page={{@index}}&size={{items.size}}" class="btn btn-default
+                                {{#if (eq @index items.number)}}active{{/if}}">{{@number}}</a>
+                        {{/times}}
+                        <a href="?page={{add 1 items.number}}&size={{items.size}}"
+                           class="btn btn-default {{#if (eq items.totalPages (add 1 items.number))}}disabled{{/if}}">
+                            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                    {{/unless}}
+                    <div class="btn-group btn-group-xs" role="group">
+                        <button type="button" class="btn btn-default dropdown-toggle"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{items.size}} per page <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="?size=10">10 per page</a></li>
+                            <li><a href="?size=20">20 per page</a></li>
+                            <li><a href="?size=50">50 per page</a></li>
+                            <li><a href="?size=100">100 per page</a></li>
+                            <li><a href="?size=200">200 per page</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+
+{{/partial}}
+
+{{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.two-sided }}

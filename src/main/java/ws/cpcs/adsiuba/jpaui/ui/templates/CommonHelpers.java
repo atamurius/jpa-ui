@@ -1,7 +1,6 @@
 package ws.cpcs.adsiuba.jpaui.ui.templates;
 
 import com.github.jknack.handlebars.Options;
-import ws.cpcs.adsiuba.jpaui.model.PropertyEnum;
 
 import java.io.IOException;
 import java.util.*;
@@ -11,15 +10,24 @@ import java.util.stream.Stream;
 public class CommonHelpers {
 
     public static String eq(Object first, Object second) {
-        return Objects.equals(first, second) ? "true" : null;
+        return Objects.equals(String.valueOf(first), String.valueOf(second)) ? "true" : null;
     }
 
-    public static StringBuilder each(Collection list, Options opts) throws IOException {
+    public static StringBuilder each(Object coll, Options opts) throws IOException {
         StringBuilder buff = new StringBuilder();
-        if (list != null) {
+        if (coll != null) {
             int i = 0;
+            Collection list;
+            if (coll instanceof Map) {
+                list = new ArrayList(((Map) coll).entrySet());
+            } else if (coll instanceof Collection) {
+                list = (Collection) coll;
+            } else {
+                throw new IllegalArgumentException(coll +
+                        " expected to be Collection or Map, but got "+ coll.getClass());
+            }
             if (opts.hash("reversed") != null) {
-                List copy = new ArrayList(list);
+                List copy = new ArrayList((Collection) list);
                 Collections.reverse(copy);
                 list = copy;
             }
@@ -34,13 +42,25 @@ public class CommonHelpers {
         return buff;
     }
 
+    public static StringBuilder times(int n, Options opts) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            opts.data("index", i);
+            opts.data("number", i + 1);
+            opts.data("first", i == 0 ? true : null);
+            opts.data("last", i + 1 == n ? true : null);
+            sb.append(opts.fn());
+        }
+        return sb;
+    }
+
+    public static String add(int n, Object o) {
+        return String.valueOf(Long.valueOf(String.valueOf(o)) + n);
+    }
+
     public static String concat(Object param, Options opts) {
         return Stream.concat(Stream.of(param), Stream.of(opts.params))
                 .map(String::valueOf)
                 .collect(Collectors.joining(opts.hash("sep", "")));
-    }
-
-    public static String getProperty(Object obj, PropertyEnum.Property prop) {
-        return Objects.toString(prop.get(obj));
     }
 }

@@ -1,28 +1,23 @@
 package ws.cpcs.adsiuba.jpaui.webapp.app;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaDialect;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import ws.cpcs.adsiuba.jpaui.model.EntityDescriptor;
-import ws.cpcs.adsiuba.jpaui.ui.admin.UIConfig;
-import ws.cpcs.adsiuba.jpaui.webapp.app.model.groups.UserGroup;
-import ws.cpcs.adsiuba.jpaui.webapp.app.model.users.ListedUser;
-import ws.cpcs.adsiuba.jpaui.webapp.app.model.users.User;
-import ws.cpcs.adsiuba.jpaui.webapp.app.model.users.UserRepo;
+import ws.cpcs.adsiuba.jpaui.model.descr.EntityDescriptor;
+import ws.cpcs.adsiuba.jpaui.model.UIConfig;
+import ws.cpcs.adsiuba.jpaui.webapp.app.model.User;
+import ws.cpcs.adsiuba.jpaui.webapp.app.model.UserGroup;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.Collections;
 import java.util.HashMap;
 
 @Configuration
@@ -73,15 +68,16 @@ public class AppConfig {
     }
 
     @Bean
-    EntityDescriptor<User> userDescriptor() {
-        return new EntityDescriptor<>(User.class)
+    EntityDescriptor userDescriptor() {
+        return new EntityDescriptor.Builder(User.class)
                 .withIcon("user")
-                .withView("list", ListedUser.class);
+                .build();
     }
 
     @Bean
-    EntityDescriptor<UserGroup> groupDescriptor() {
-        return new EntityDescriptor<>(UserGroup.class)
-                .withIcon("eye-open");
+    EntityDescriptor groupDescriptor() {
+        return new EntityDescriptor.Builder(UserGroup.class)
+                .withIcon("eye-open")
+                .build();
     }
 }

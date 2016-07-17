@@ -1,6 +1,6 @@
-package ws.cpcs.adsiuba.jpaui.webapp.app.model.users;
+package ws.cpcs.adsiuba.jpaui.webapp.app.model;
 
-import ws.cpcs.adsiuba.jpaui.model.WithId;
+import ws.cpcs.adsiuba.jpaui.model.Ident;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
-public class User implements WithId<Long>, ListedUser {
+public class User implements Ident<Long> {
 
     @Id @GeneratedValue
     private Long id;
@@ -19,12 +19,9 @@ public class User implements WithId<Long>, ListedUser {
 
     private Date lastLogin;
 
+    @Override
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -49,15 +46,5 @@ public class User implements WithId<Long>, ListedUser {
 
     public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return WithId.equals(this, o);
-    }
-
-    @Override
-    public int hashCode() {
-        return WithId.hashCode(this);
     }
 }
