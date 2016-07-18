@@ -1,0 +1,8 @@
+<label class="radio-inline">
+    <input type="radio" name="{{property.name}}" id="field_{{property.name}}"
+           {{#if (eq 'true' value)}}checked{{/if}} value="true"> Yes
+</label>
+<label class="radio-inline">
+    <input type="radio" name="{{property.name}}" id="field_{{property.name}}_false"
+           {{#unless (eq 'true' value)}}checked{{/unless}} value="false"> No
+</label>

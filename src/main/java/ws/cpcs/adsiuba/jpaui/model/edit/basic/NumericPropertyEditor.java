@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ws.cpcs.adsiuba.jpaui.model.descr.Property;
 import ws.cpcs.adsiuba.jpaui.model.edit.PropertyEditor;
 
+import java.util.Map;
+
 @Service
 @Order(100)
 public class NumericPropertyEditor implements PropertyEditor<Number> {
@@ -28,5 +30,18 @@ public class NumericPropertyEditor implements PropertyEditor<Number> {
             return Long.valueOf(value);
         }
         throw new IllegalArgumentException("Unsupported type "+ type);
+    }
+
+    @Override
+    public Class getTemplateBase() {
+        return StringPropertyEditor.class;
+    }
+
+    @Override
+    public String render(String action, Property<Number> property, Number value, Map<String, Object> ctx) {
+        if ("edit".equals(action)) {
+            ctx.put("type", "number");
+        }
+        return PropertyEditor.super.render(action, property, value, ctx);
     }
 }

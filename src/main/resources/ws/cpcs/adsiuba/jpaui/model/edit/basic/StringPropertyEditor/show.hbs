@@ -1,0 +1,7 @@
+{{#if link}}
+    <a href="{{base}}/{{property.owner.id}}/{{property 'Id' type=property.owner}}">
+        {{&value}}
+    </a>
+{{else}}
+    {{&value}}
+{{/if}}

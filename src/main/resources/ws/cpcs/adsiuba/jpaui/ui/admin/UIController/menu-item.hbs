@@ -1,6 +1,6 @@
 <li role="presentation" class="{{#if active}}active{{/if}} {{#if disabled}}disabled{{/if}}">
     <a href="{{url}}" title="{{title}}">
         <span class="glyphicon glyphicon-{{icon}}" aria-hidden="true"></span>
-        <span class="hidden-sm">{{title}}</span>
+        <span class="{{#unless full}}hidden-sm{{/unless}}">{{title}}</span>
     </a>
 </li>

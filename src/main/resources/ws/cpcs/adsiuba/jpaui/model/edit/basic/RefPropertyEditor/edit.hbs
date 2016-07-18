@@ -1,0 +1,22 @@
+<div class="input-group input-group-sm">
+    <input type="hidden" name="{{property.name}}" value="{{property 'Id' object=value type=type}}"/>
+    <span class="form-control">
+        {{#if value}}
+            <a href="{{base}}/{{type.id}}/{{property 'Id' object=value type=type}}">{{&describeEntity value}}</a>
+        {{/if}}
+    </span>
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                id="field_{{property.name}}"
+                aria-haspopup="true" aria-expanded="false">
+            <span class="glyphicon glyphicon-search"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right ref-options-list"
+            data-path="{{base}}/{{type.id}}"
+            style="width:400px">
+            <li role="separator" class="divider"></li>
+            <li class="container-fluid"><input class="form-control input-sm" placeholder="Search&hellip;" /></li>
+        </ul>
+    </div>
+</div>
+

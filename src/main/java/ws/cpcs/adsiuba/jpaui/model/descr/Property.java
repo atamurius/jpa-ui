@@ -1,21 +1,25 @@
 package ws.cpcs.adsiuba.jpaui.model.descr;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import ws.cpcs.adsiuba.jpaui.model.UIEntity;
+import ws.cpcs.adsiuba.jpaui.model.UIPropertiesOrder;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /**
  * Bean Property object
  */
 public class Property<T> {
+    private final EntityDescriptor<?> owner;
     private final Class<T> type;
     private final String name;
     private final String displayName;
@@ -23,8 +27,9 @@ public class Property<T> {
     private final Method getter;
     private final Method setter;
 
-    private Property(Class<T> type, String name, String displayName,
+    private Property(EntityDescriptor<?> owner, Class<T> type, String name, String displayName,
                     Annotation[] annotations, Method getter, Method setter) {
+        this.owner = owner;
         this.type = type;
         this.name = name;
         this.displayName = displayName;
@@ -49,7 +54,7 @@ public class Property<T> {
                 && m.getParameterTypes()[0].equals(type);
     }
 
-    public static Property<?> extract(String name, Map<String, Method> methods) {
+    public static Property<?> extract(EntityDescriptor<?> owner, String name, Map<String, Method> methods) {
         Method getter = methods.getOrDefault("get"+ name, methods.get("is"+ name));
         if (getter == null || ! name.equals(getterName(getter))) {
             throw new IllegalArgumentException("Invalid getter: "+ getter);
@@ -59,6 +64,7 @@ public class Property<T> {
             setter = null;
         }
         return new Property<>(
+                owner,
                 getter.getReturnType(),
                 name,
                 NameUtils.spaceSeparated(name), // TODO annotations?
@@ -67,19 +73,36 @@ public class Property<T> {
                 setter);
     }
 
-    public static List<Property<?>> extract(Class<?> type) {
+    public static Map<String, Property<?>> extract(EntityDescriptor<?> owner, Class<?> type) {
         Map<String,Method> methods = Stream.of(type.getMethods())
                 .filter(m -> ! m.getDeclaringClass().equals(Object.class))
                 .collect(toMap(
                         Method::getName,
                         identity(),
                         (a,b) -> a.getReturnType().isAssignableFrom(b.getReturnType())
-                            ? b : a));
-        return methods.values().stream()
+                            ? b : a,
+                        LinkedHashMap::new));
+
+        Map<String,Property<?>> props = methods.values().stream()
                 .map(Property::getterName)
                 .filter(Objects::nonNull)
-                .map(n -> extract(n, methods))
-                .collect(toList());
+                .collect(toMap(
+                        identity(),
+                        name -> extract(owner, name, methods),
+                        (a,b) -> b,
+                        LinkedHashMap::new));
+
+        UIPropertiesOrder order = type.getAnnotation(UIPropertiesOrder.class);
+        if (order != null) {
+            Map<String,Property<?>> ordered = new LinkedHashMap<>();
+            Stream.of(order.value())
+                    .forEach(p -> ordered.put(p, props.get(p)));
+            ordered.putAll(props);
+            return ordered;
+        }
+        else {
+            return props;
+        }
     }
 
     public String getName() {
@@ -122,9 +145,18 @@ public class Property<T> {
         return setter == null;
     }
 
+    @JsonIgnore
+    public EntityDescriptor<? extends UIEntity<?>> getOwner() {
+        return (EntityDescriptor) owner;
+    }
+
     @Override
     public String toString() {
         return getter.getDeclaringClass().getCanonicalName() +"."+ name +": "+ type;
+    }
+
+    public boolean isAnnotated(Class<? extends Annotation> aType) {
+        return Stream.of(annotations).anyMatch(a -> aType.isAssignableFrom(a.getClass()));
     }
 }
 

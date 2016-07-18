@@ -6,16 +6,16 @@ import java.util.Objects;
 /**
  * Entity with ID of given type
  */
-public interface Ident<T extends Serializable> {
+public interface UIEntity<T extends Serializable> {
 
     T getId();
 
-    static boolean equals(Ident<?> self, Object other) {
+    static boolean equals(UIEntity<?> self, Object other) {
         return !(other == null || !other.getClass().equals(self.getClass()))
-                && Objects.equals(self.getId(), ((Ident) other).getId());
+                && Objects.equals(self.getId(), ((UIEntity) other).getId());
     }
 
-    static int hashCode(Ident<?> obj) {
+    static int hashCode(UIEntity<?> obj) {
         return obj == null ? 0 : Objects.hashCode(obj.getId());
     }
 }

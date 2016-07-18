@@ -17,18 +17,24 @@
           class="form-horizontal"
           id="main-form"
           onsubmit="return submitForm(this)">
+        <div class="form-group global-error" style="display:none">
+            <div class="col-sm-offset-2 col-sm-10">
+                <div class="alert alert-danger"></div>
+            </div>
+        </div>
         {{#each currentEntity.properties}}
-            {{#unless (eq true readOnly)}}
-                <div class="form-group">
-                    <label class="col-sm-2 control-label" for="field_{{name}}"
-                           title="{{displayName}}">{{displayName}}</label>
+            <div class="form-group">
+                <label class="col-sm-2 control-label" for="field_{{name}}"
+                       title="{{displayName}}">{{displayName}}</label>
                     <div class="col-sm-10">
-                        <input class="form-control input-sm"
-                               name="{{name}}"
-                               id="field_{{name}}" placeholder="{{displayName}}">
+                        {{#unless (eq true readOnly)}}
+                            {{{editProperty name object=item}}}
+                            <span class="help-block error" style="display:none"></span>
+                        {{^}}
+                            <p class="form-control-static">{{{showProperty name object=item}}}</p>
+                        {{/unless}}
                     </div>
                 </div>
-            {{/unless}}
         {{/each}}
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

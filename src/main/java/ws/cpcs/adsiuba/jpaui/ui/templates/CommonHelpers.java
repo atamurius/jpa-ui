@@ -1,19 +1,21 @@
 package ws.cpcs.adsiuba.jpaui.ui.templates;
 
 import com.github.jknack.handlebars.Options;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CommonHelpers {
+@Service
+public class CommonHelpers implements HelperService {
 
-    public static String eq(Object first, Object second) {
+    public String eq(Object first, Object second) {
         return Objects.equals(String.valueOf(first), String.valueOf(second)) ? "true" : null;
     }
 
-    public static StringBuilder each(Object coll, Options opts) throws IOException {
+    public StringBuilder each(Object coll, Options opts) throws IOException {
         StringBuilder buff = new StringBuilder();
         if (coll != null) {
             int i = 0;
@@ -42,7 +44,7 @@ public class CommonHelpers {
         return buff;
     }
 
-    public static StringBuilder times(int n, Options opts) throws IOException {
+    public StringBuilder times(int n, Options opts) throws IOException {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < n; i++) {
             opts.data("index", i);
@@ -54,11 +56,11 @@ public class CommonHelpers {
         return sb;
     }
 
-    public static String add(int n, Object o) {
+    public String add(int n, Object o) {
         return String.valueOf(Long.valueOf(String.valueOf(o)) + n);
     }
 
-    public static String concat(Object param, Options opts) {
+    public String concat(Object param, Options opts) {
         return Stream.concat(Stream.of(param), Stream.of(opts.params))
                 .map(String::valueOf)
                 .collect(Collectors.joining(opts.hash("sep", "")));

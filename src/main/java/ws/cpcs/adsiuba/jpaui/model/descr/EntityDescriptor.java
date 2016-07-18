@@ -1,9 +1,12 @@
 package ws.cpcs.adsiuba.jpaui.model.descr;
 
-import ws.cpcs.adsiuba.jpaui.model.Ident;
+import ws.cpcs.adsiuba.jpaui.model.UIDisplayProperty;
+import ws.cpcs.adsiuba.jpaui.model.UIEntity;
+import ws.cpcs.adsiuba.jpaui.model.UIPropertiesOrder;
 
 import javax.persistence.Entity;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
@@ -15,7 +18,7 @@ import static ws.cpcs.adsiuba.jpaui.model.descr.NameUtils.spaceSeparated;
 /**
  * Describes entity for UI
  */
-public class EntityDescriptor<T extends Ident> {
+public class EntityDescriptor<T extends UIEntity> {
 
     private Class<T> entityClass;
     private String name;
@@ -31,7 +34,7 @@ public class EntityDescriptor<T extends Ident> {
         private EntityDescriptor<?> descriptor = new EntityDescriptor<>();
 
         @SuppressWarnings("unchecked")
-        public Builder(Class<? extends Ident> entity) {
+        public Builder(Class<? extends UIEntity> entity) {
             requireNonNull(entity);
             requireNonNull(entity.getAnnotation(Entity.class), "Entity class should be annotated with @Entity");
             descriptor.entityClass = (Class) entity;
@@ -62,7 +65,7 @@ public class EntityDescriptor<T extends Ident> {
             if (! view.isAssignableFrom(descriptor.entityClass)) {
                 throw new IllegalArgumentException(view +" is not interface of "+ descriptor.entityClass);
             }
-            descriptor.views.put(name, Property.extract(view));
+            descriptor.views.put(name, new ArrayList<>(Property.extract(descriptor, view).values()));
             return this;
         }
 
@@ -76,12 +79,9 @@ public class EntityDescriptor<T extends Ident> {
             if (descriptor.id == null) {
                 descriptor.id = dashSeparated(descriptor.pluralName);
             }
-            List<Property<?>> properties =
-                    Property.extract(descriptor.entityClass);
+            descriptor.properties = Property.extract(descriptor, descriptor.getType());
+            List<Property<?>> properties = new ArrayList<>((descriptor.properties.values()));
             properties.removeIf(p -> p.getName().equals("Id"));
-            descriptor.properties = properties.stream()
-                    .collect(toMap(Property::getName,
-                            identity(), (a, b) -> b, LinkedHashMap::new));
             descriptor.views.put("default", properties);
             return descriptor;
         }
@@ -108,7 +108,7 @@ public class EntityDescriptor<T extends Ident> {
     }
 
     public List<Property<?>> getProperties() {
-        return views.get("default");
+        return new ArrayList<>(properties.values());
     }
 
     public List<Property<?>> getProperties(String view) {
@@ -121,6 +121,16 @@ public class EntityDescriptor<T extends Ident> {
     }
 
     public String getDescription(T item) {
-        return name +" "+ item.getId(); // TODO title
+        if (item == null) return null;
+        Property<?> descriptor = getDescriptor();
+        return descriptor != null ? String.valueOf(descriptor.read(item))
+                : name +" "+ item.getId();
+    }
+
+    public Property<?> getDescriptor() {
+        return properties.values().stream()
+                .filter(p -> p.isAnnotated(UIDisplayProperty.class))
+                .findAny()
+                .orElse(null);
     }
 }

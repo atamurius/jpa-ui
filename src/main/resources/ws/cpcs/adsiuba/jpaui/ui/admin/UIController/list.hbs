@@ -5,12 +5,6 @@
         title=(concat 'Create ' currentEntity.name)
         icon='plus-sign'}}
 
-    {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
-        disabled=true
-        url=(concat base '/' currentEntity.id)
-        title=(concat 'Remove ' currentEntity.pluralName)
-        icon='minus-sign'}}
-
 {{/partial}}
 
 {{#partial 'menu'}}
@@ -22,18 +16,53 @@
     <table class="table table-condensed table-hover">
         <thead>
         <tr>
-            <th width="1"><input type="checkbox" /></th>
+            <th width="1">
+                <div class="btn-group btn-group-xs">
+                    <button type="button" class="btn dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
+                            url=(concat base '/' currentEntity.id '/+')
+                            title=(concat 'Create ' currentEntity.name)
+                            icon='plus-sign'
+                            full=true}}
+                    </ul>
+                </div>
+            </th>
             {{#each properties}}
-                <th>{{displayName}}</th>
+                <th class="{{#if currentEntity.descriptor}}{{#unless (eq name currentEntity.descriptor.name)}}hidden-xs{{/unless}}{{/if}}">
+                    {{displayName}}</th>
             {{/each}}
         </tr>
         </thead>
         <tbody>
         {{#each items.content}}
             <tr>
-                <th><input type="checkbox" name="items" value="{{id}}" /></th>
-                {{#each this}}
-                    <td>{{value}}</td>
+                <th>
+                    <div class="btn-group btn-group-xs">
+                        <button type="button" class="btn dropdown-toggle"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
+                                url=(concat base '/' currentEntity.id '/' (property 'Id'))
+                                title=(concat 'Edit ' currentEntity.name)
+                                icon='edit'
+                                full=true}}
+                            {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.menu-item
+                                url=(concat base '/' currentEntity.id '/' (property 'Id') '/delete')
+                                title=(concat 'Delete ' currentEntity.name)
+                                icon='trash'
+                                full=true}}
+                        </ul>
+                    </div>
+                </th>
+                {{#each properties}}
+                    <td class="{{#if currentEntity.descriptor}}{{#unless (eq name currentEntity.descriptor.name)}}hidden-xs{{/unless}}{{/if}}">
+                        {{{showProperty name}}}</td>
                 {{/each}}
             </tr>
         {{/each}}
