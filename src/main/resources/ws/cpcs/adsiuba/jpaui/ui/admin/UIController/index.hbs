@@ -3,7 +3,30 @@
 {{/partial}}
 
 {{#partial 'body'}}
-    <h1>Admin panel</h1>
+    <div class="row">
+        {{#each entities}}
+            <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <span class="glyphicon glyphicon-{{iconId}}" aria-hidden="true"></span>
+                            {{pluralName}}
+                        </h3>
+                    </div>
+                    <div class="list-group">
+                        <a href="{{base}}/{{id}}" class="list-group-item">
+                            <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+                            List {{pluralName}}
+                        </a>
+                        <a href="{{base}}/{{id}}/+" class="list-group-item">
+                            <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+                            Create {{name}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
 {{/partial}}
 
 {{> ws.cpcs.adsiuba.jpaui.ui.admin.UIController.two-sided }}
